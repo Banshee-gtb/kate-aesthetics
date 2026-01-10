@@ -70,7 +70,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
           `}
         >
-          <div className="flex flex-col h-full p-4">
+          <div className="flex flex-col h-full p-4 pt-20 lg:pt-4">
             {/* Logo */}
             <div className="hidden lg:block mb-8">
               <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
