@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Mail, Lock } from 'lucide-react';
+import { useRouter } from 'next/router';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -8,7 +8,7 @@ import { supabase } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
 
 export default function AdminLogin() {
-  const navigate = useNavigate();
+  const router = useRouter();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -45,7 +45,8 @@ export default function AdminLogin() {
         description: 'Welcome back, Kate!',
       });
 
-      navigate('/admin');
+      router.push('/admin');
+
     } catch (error: any) {
       console.error('Login error:', error);
       toast({
