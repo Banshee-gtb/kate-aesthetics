@@ -71,16 +71,17 @@ export function Checkout() {
       message += `📦 *Order Items:*\n`;
       items.forEach((item, index) => {
         message += `\n${index + 1}. ${item.product.title}\n`;
+        
+        // Add product image URL as title card (on its own line for preview)
+        if (item.product.images && item.product.images.length > 0) {
+          message += `${item.product.images[0]}\n\n`;
+        }
+        
         message += `   Color: ${item.variant.color}\n`;
         message += `   Size: ${item.variant.size}\n`;
         message += `   Quantity: ${item.quantity}\n`;
         message += `   Price: ₦${item.variant.price.toLocaleString()} each\n`;
         message += `   Subtotal: ₦${(item.variant.price * item.quantity).toLocaleString()}\n`;
-        
-        // Add product image URL if available
-        if (item.product.images && item.product.images.length > 0) {
-          message += `   Image: ${item.product.images[0]}\n`;
-        }
       });
       
       message += `\n💰 *Payment Summary:*\n`;
