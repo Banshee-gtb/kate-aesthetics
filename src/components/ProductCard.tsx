@@ -37,20 +37,32 @@ export function ProductCard({ product, variants = [] }: ProductCardProps) {
     e.preventDefault();
     e.stopPropagation();
     
-    if (variants.length === 0) {
+    if (!variants || variants.length === 0) {
       toast({
         title: 'No variants available',
-        description: 'Please view product details to select options.',
+        description: 'Please view product details or contact us.',
         variant: 'destructive',
       });
       return;
     }
 
-    // Add first available variant
-    addItem(product, variants[0], 1);
+    // Find first in-stock variant
+    const availableVariant = variants.find(v => v.in_stock) || variants[0];
+    
+    if (!availableVariant) {
+      toast({
+        title: 'Out of stock',
+        description: 'This product is currently unavailable.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Add variant to cart
+    addItem(product, availableVariant, 1);
     toast({
-      title: 'Added to cart',
-      description: `${product.title} has been added to your cart.`,
+      title: '✓ Added to cart',
+      description: `${product.title} (${availableVariant.color}, ${availableVariant.size})`,
     });
   };
 
