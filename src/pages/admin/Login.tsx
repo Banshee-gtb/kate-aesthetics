@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Mail, Lock } from 'lucide-react';
-import { useRouter } from 'next/router';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -8,7 +7,6 @@ import { supabase } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
 
 export default function AdminLogin() {
-  const router = useRouter();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -40,13 +38,14 @@ export default function AdminLogin() {
         throw new Error('Unauthorized: Admin access only');
       }
 
+      // Success toast
       toast({
         title: 'Login successful',
-        description: 'Welcome back, Kate!',
+        description: 'Welcome back!',
       });
 
-      router.push('/admin');
-
+      // ✅ Removed router push for now
+      // We’ll add Next.js redirect later
     } catch (error: any) {
       console.error('Login error:', error);
       toast({
@@ -82,7 +81,9 @@ export default function AdminLogin() {
                   type="email"
                   required
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
                   className="pl-10"
                   placeholder="admin@example.com"
                 />
@@ -98,7 +99,9 @@ export default function AdminLogin() {
                   type="password"
                   required
                   value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
                   className="pl-10"
                   placeholder="••••••••"
                 />
