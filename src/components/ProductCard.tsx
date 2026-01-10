@@ -22,7 +22,9 @@ export function ProductCard({ product, variants = [] }: ProductCardProps) {
       ? `$${minPrice.toFixed(2)}`
       : `$${minPrice.toFixed(2)} - $${maxPrice.toFixed(2)}`;
 
-  const imageUrl = product.images[0] || 'https://via.placeholder.com/400x500.png?text=No+Image';
+  const imageUrl = product.images && product.images.length > 0
+    ? product.images[0]
+    : 'https://via.placeholder.com/400x500.png?text=No+Image';
 
   return (
     <Link to={`/product/${product.id}`}>
