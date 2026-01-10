@@ -3,12 +3,13 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
   Package,
-  ShoppingBag,
+  ShoppingCart,
   FolderTree,
   Settings,
   LogOut,
   Menu,
   X,
+  Users,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/lib/supabase';
@@ -36,7 +37,8 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     { icon: LayoutDashboard, label: 'Dashboard', path: '/admin' },
     { icon: Package, label: 'Products', path: '/admin/products' },
     { icon: FolderTree, label: 'Categories', path: '/admin/categories' },
-    { icon: ShoppingBag, label: 'Orders', path: '/admin/orders' },
+    { icon: ShoppingCart, label: 'Orders', path: '/admin/orders' },
+    { icon: Users, label: 'Customers', path: '/admin/users' },
     { icon: Settings, label: 'Settings', path: '/admin/settings' },
   ];
 

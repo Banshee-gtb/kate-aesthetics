@@ -9,6 +9,11 @@ import { Cart } from '@/pages/Cart';
 import { Checkout } from '@/pages/Checkout';
 import AdminLogin from '@/pages/admin/Login';
 import { AdminDashboard } from '@/pages/admin/Dashboard';
+import { ProductsPage } from '@/pages/admin/Products';
+import { CategoriesPage } from '@/pages/admin/Categories';
+import { OrdersPage } from '@/pages/admin/Orders';
+import { UsersPage } from '@/pages/admin/Users';
+import { SettingsPage } from '@/pages/admin/Settings';
 import { useAuth } from '@/hooks/useAuth';
 import { Toaster } from '@/components/ui/toaster';
 
@@ -64,10 +69,11 @@ function App() {
               <AdminLayout>
                 <Routes>
                   <Route path="/" element={<AdminDashboard />} />
-                  <Route path="/products" element={<div>Products Page (Coming Soon)</div>} />
-                  <Route path="/categories" element={<div>Categories Page (Coming Soon)</div>} />
-                  <Route path="/orders" element={<div>Orders Page (Coming Soon)</div>} />
-                  <Route path="/settings" element={<div>Settings Page (Coming Soon)</div>} />
+                  <Route path="/products" element={<ProductsPage />} />
+                  <Route path="/categories" element={<CategoriesPage />} />
+                  <Route path="/orders" element={<OrdersPage />} />
+                  <Route path="/users" element={<UsersPage />} />
+                  <Route path="/settings" element={<SettingsPage />} />
                 </Routes>
               </AdminLayout>
             </ProtectedRoute>

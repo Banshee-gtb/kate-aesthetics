@@ -1,24 +1,13 @@
-export interface Admin {
-  id: string;
-  email: string;
-  created_at: string;
-}
-
-export interface Category {
-  id: string;
-  name: string;
-  created_at: string;
-}
-
 export interface Product {
   id: string;
   title: string;
   description: string | null;
   category_id: string | null;
-  tags: string[];
-  images: string[];
+  tags: string[] | null;
+  images: string[] | null;
   is_active: boolean;
   created_at: string;
+  category?: Category;
 }
 
 export interface ProductVariant {
@@ -31,16 +20,23 @@ export interface ProductVariant {
   created_at: string;
 }
 
+export interface Category {
+  id: string;
+  name: string;
+  created_at: string;
+}
+
 export interface Order {
   id: string;
   customer_name: string;
   customer_phone: string;
   customer_address: string;
   amount_paid: number;
-  payment_method: 'paystack' | 'mobile_money';
+  payment_method: string;
   paystack_reference: string | null;
-  status: 'pending' | 'paid' | 'shipped' | 'completed' | 'cancelled';
+  status: string;
   created_at: string;
+  order_items?: OrderItem[];
 }
 
 export interface OrderItem {
@@ -51,22 +47,8 @@ export interface OrderItem {
   quantity: number;
   price: number;
   created_at: string;
-}
-
-export interface Profile {
-  id: string;
-  name: string | null;
-  phone: string | null;
-  address: string | null;
-  created_at: string;
-}
-
-export interface Settings {
-  id: string;
-  key: string;
-  value: string | null;
-  created_at: string;
-  updated_at: string;
+  product?: Product;
+  variant?: ProductVariant;
 }
 
 export interface CartItem {
@@ -75,14 +57,10 @@ export interface CartItem {
   quantity: number;
 }
 
-export interface ProductWithVariants extends Product {
-  variants: ProductVariant[];
-  category?: Category;
-}
-
-export interface OrderWithItems extends Order {
-  items: (OrderItem & {
-    product: Product;
-    variant: ProductVariant;
-  })[];
+export interface Profile {
+  id: string;
+  name: string | null;
+  phone: string | null;
+  address: string | null;
+  created_at: string;
 }
