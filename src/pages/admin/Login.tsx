@@ -6,10 +6,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
+import { useAuthStore } from '@/stores/authStore';
 
 export default function AdminLogin() {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const login = useAuthStore((state) => state.login);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
@@ -39,6 +41,9 @@ export default function AdminLogin() {
         await supabase.auth.signOut();
         throw new Error('Unauthorized: Admin access only');
       }
+
+      // Update auth store with user data
+      login(data.user);
 
       // Success toast
       toast({
