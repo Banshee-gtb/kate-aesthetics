@@ -1,7 +1,11 @@
 import { Link } from 'react-router-dom';
+import { ShoppingCart } from 'lucide-react';
 import { Product, ProductVariant } from '@/types';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { useCartStore } from '@/stores/cartStore';
+import { useToast } from '@/hooks/use-toast';
 
 interface ProductCardProps {
   product: Product;
@@ -9,13 +13,16 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, variants = [] }: ProductCardProps) {
+  const { toast } = useToast();
+  const addItem = useCartStore(state => state.addItem);
+
   const minPrice = variants.length > 0
     ? Math.min(...variants.map(v => v.price))
-    : 0;
+    : product.base_price || 0;
 
   const maxPrice = variants.length > 0
     ? Math.max(...variants.map(v => v.price))
-    : 0;
+    : product.base_price || 0;
 
   const displayPrice =
     minPrice === maxPrice
@@ -26,9 +33,30 @@ export function ProductCard({ product, variants = [] }: ProductCardProps) {
     ? product.images[0]
     : 'https://via.placeholder.com/400x500.png?text=No+Image';
 
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (variants.length === 0) {
+      toast({
+        title: 'No variants available',
+        description: 'Please view product details to select options.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Add first available variant
+    addItem(product, variants[0], 1);
+    toast({
+      title: 'Added to cart',
+      description: `${product.title} has been added to your cart.`,
+    });
+  };
+
   return (
     <Link to={`/product/${product.id}`}>
-      <Card className="group overflow-hidden border-0 bg-gradient-card backdrop-blur-soft hover:shadow-lg transition-smooth">
+      <Card className="group overflow-hidden border-0 bg-gradient-card backdrop-blur-soft hover:shadow-lg transition-smooth h-full flex flex-col">
         <CardContent className="p-0">
           {/* Image */}
           <div className="aspect-[4/5] overflow-hidden bg-muted">
@@ -40,16 +68,23 @@ export function ProductCard({ product, variants = [] }: ProductCardProps) {
           </div>
         </CardContent>
 
-        <CardFooter className="flex flex-col items-start p-4 space-y-2">
+        <CardFooter className="flex flex-col items-start p-3 sm:p-4 space-y-2 flex-1">
           {/* Title */}
-          <h3 className="font-semibold text-base line-clamp-1">{product.title}</h3>
+          <h3 className="font-semibold text-sm sm:text-base line-clamp-1 w-full">{product.title}</h3>
+
+          {/* Description */}
+          {product.description && (
+            <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2 w-full">
+              {product.description}
+            </p>
+          )}
 
           {/* Price */}
-          <p className="text-lg font-bold text-primary">{displayPrice}</p>
+          <p className="text-base sm:text-lg font-bold text-primary">{displayPrice}</p>
 
           {/* Tags */}
           {product.tags && product.tags.length > 0 && (
-            <div className="flex flex-wrap gap-1">
+            <div className="flex flex-wrap gap-1 w-full">
               {product.tags.slice(0, 2).map((tag, index) => (
                 <Badge key={index} variant="secondary" className="text-xs">
                   {tag}
@@ -57,6 +92,17 @@ export function ProductCard({ product, variants = [] }: ProductCardProps) {
               ))}
             </div>
           )}
+
+          {/* Add to Cart Button */}
+          <Button
+            size="sm"
+            className="w-full mt-2"
+            onClick={handleAddToCart}
+            disabled={variants.length === 0}
+          >
+            <ShoppingCart className="h-4 w-4 mr-2" />
+            Add to Cart
+          </Button>
         </CardFooter>
       </Card>
     </Link>

@@ -20,6 +20,27 @@ export function Checkout() {
     paymentMethod: 'paystack' as 'paystack' | 'mobile_money',
   });
 
+  const calculateSubtotal = () => {
+    return items.reduce((total, item) => {
+      return total + (item.variant.price * item.quantity);
+    }, 0);
+  };
+
+  const calculateShipping = () => {
+    // Get unique products and sum their shipping fees
+    const uniqueProducts = new Map<string, number>();
+    items.forEach(item => {
+      if (!uniqueProducts.has(item.product.id)) {
+        uniqueProducts.set(item.product.id, item.product.shipping_fee || 0);
+      }
+    });
+    return Array.from(uniqueProducts.values()).reduce((sum, fee) => sum + fee, 0);
+  };
+
+  const getTotalWithShipping = () => {
+    return calculateSubtotal() + calculateShipping();
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -35,6 +56,8 @@ export function Checkout() {
     setLoading(true);
 
     try {
+      const totalAmount = getTotalWithShipping();
+
       // Create order
       const { data: order, error: orderError } = await supabase
         .from('orders')
@@ -42,7 +65,7 @@ export function Checkout() {
           customer_name: formData.name,
           customer_phone: formData.phone,
           customer_address: formData.address,
-          amount_paid: getTotalPrice(),
+          amount_paid: totalAmount,
           payment_method: formData.paymentMethod,
           status: 'pending',
         })
@@ -50,6 +73,21 @@ export function Checkout() {
         .single();
 
       if (orderError) throw orderError;
+
+      // Create order items
+      const orderItems = items.map(item => ({
+        order_id: order.id,
+        product_id: item.product.id,
+        variant_id: item.variant.id,
+        quantity: item.quantity,
+        price: item.variant.price,
+      }));
+
+      const { error: itemsError } = await supabase
+        .from('order_items')
+        .insert(orderItems);
+
+      if (itemsError) throw itemsError;
 
       // In a real implementation, you would integrate with Paystack here
       // For now, we'll just mark the order as paid
@@ -180,12 +218,28 @@ export function Checkout() {
                 ))}
               </div>
 
-              <div className="border-t border-border pt-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-lg font-semibold">Total</span>
-                  <span className="text-2xl font-bold text-primary">
-                    ₦{getTotalPrice().toLocaleString()}
+              <div className="border-t border-border pt-4 space-y-3">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Subtotal</span>
+                  <span className="font-semibold">
+                    ₦{calculateSubtotal().toLocaleString()}
                   </span>
+                </div>
+                
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Shipping Fee</span>
+                  <span className="font-semibold">
+                    ₦{calculateShipping().toLocaleString()}
+                  </span>
+                </div>
+
+                <div className="border-t border-border pt-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-lg font-semibold">Total</span>
+                    <span className="text-2xl font-bold text-primary">
+                      ₦{getTotalWithShipping().toLocaleString()}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
