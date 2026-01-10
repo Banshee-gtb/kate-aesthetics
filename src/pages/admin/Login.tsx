@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Mail, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 
 export default function AdminLogin() {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
@@ -44,8 +46,8 @@ export default function AdminLogin() {
         description: 'Welcome back!',
       });
 
-      // ✅ Removed router push for now
-      // We’ll add Next.js redirect later
+      // Redirect to admin dashboard
+      navigate('/admin');
     } catch (error: any) {
       console.error('Login error:', error);
       toast({
