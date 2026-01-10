@@ -7,7 +7,7 @@ import { Shop } from '@/pages/Shop';
 import { ProductDetail } from '@/pages/ProductDetail';
 import { Cart } from '@/pages/Cart';
 import { Checkout } from '@/pages/Checkout';
-import { AdminLogin } from '@/pages/admin/Login';
+import AdminLogin from '@/pages/admin/Login';
 import { AdminDashboard } from '@/pages/admin/Dashboard';
 import { useAuth } from '@/hooks/useAuth';
 import { Toaster } from '@/components/ui/toaster';
