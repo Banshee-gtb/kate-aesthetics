@@ -71,7 +71,7 @@ export function ProductCard({ product, variants = [] }: ProductCardProps) {
       <Card className="group overflow-hidden border-0 bg-gradient-card backdrop-blur-soft hover:shadow-lg transition-smooth h-full flex flex-col">
         <CardContent className="p-0">
           {/* Image */}
-          <div className="aspect-[4/5] overflow-hidden bg-muted">
+          <div className="aspect-[3/4] sm:aspect-[4/5] overflow-hidden bg-muted">
             <img
               src={imageUrl}
               alt={product.title}
@@ -80,23 +80,23 @@ export function ProductCard({ product, variants = [] }: ProductCardProps) {
           </div>
         </CardContent>
 
-        <CardFooter className="flex flex-col items-start p-3 sm:p-4 space-y-2 flex-1">
+        <CardFooter className="flex flex-col items-start p-2.5 sm:p-4 space-y-1.5 sm:space-y-2 flex-1">
           {/* Title */}
-          <h3 className="font-semibold text-sm sm:text-base line-clamp-1 w-full">{product.title}</h3>
+          <h3 className="font-semibold text-xs sm:text-base line-clamp-1 w-full">{product.title}</h3>
 
-          {/* Description */}
+          {/* Description - Hide on mobile for better spacing */}
           {product.description && (
-            <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2 w-full">
+            <p className="hidden sm:block text-sm text-muted-foreground line-clamp-2 w-full">
               {product.description}
             </p>
           )}
 
           {/* Price */}
-          <p className="text-base sm:text-lg font-bold text-primary">{displayPrice}</p>
+          <p className="text-sm sm:text-lg font-bold text-primary">{displayPrice}</p>
 
-          {/* Tags */}
+          {/* Tags - Show only on larger screens */}
           {product.tags && product.tags.length > 0 && (
-            <div className="flex flex-wrap gap-1 w-full">
+            <div className="hidden sm:flex flex-wrap gap-1 w-full">
               {product.tags.slice(0, 2).map((tag, index) => (
                 <Badge key={index} variant="secondary" className="text-xs">
                   {tag}
@@ -108,11 +108,11 @@ export function ProductCard({ product, variants = [] }: ProductCardProps) {
           {/* Add to Cart Button */}
           <Button
             size="sm"
-            className="w-full mt-2"
+            className="w-full mt-1 sm:mt-2 h-8 sm:h-9 text-xs sm:text-sm"
             onClick={handleAddToCart}
             disabled={variants.length === 0}
           >
-            <ShoppingCart className="h-4 w-4 mr-2" />
+            <ShoppingCart className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
             Add to Cart
           </Button>
         </CardFooter>

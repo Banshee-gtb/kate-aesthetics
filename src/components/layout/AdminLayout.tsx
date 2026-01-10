@@ -46,9 +46,11 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     <div className="min-h-screen bg-gradient-aesthetic">
       {/* Mobile Header */}
       <div className="lg:hidden sticky top-0 z-50 backdrop-blur-soft bg-white/80 border-b border-border px-4 py-3 flex items-center justify-between">
-        <h1 className="text-lg font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-          Kate Admin
-        </h1>
+        <Link to="/admin" className="flex items-center">
+          <h1 className="text-lg font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            Kate Admin
+          </h1>
+        </Link>
         <Button
           variant="ghost"
           size="icon"

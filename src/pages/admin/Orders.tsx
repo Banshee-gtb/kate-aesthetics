@@ -101,10 +101,10 @@ export function OrdersPage() {
             >
               <div className="flex flex-col md:flex-row justify-between gap-4">
                 <div className="flex-1 space-y-2">
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                     <h3 className="font-semibold text-lg">{order.customer_name}</h3>
                     <span
-                      className={`text-xs px-2 py-1 rounded-full ${
+                      className={`text-xs px-2 py-1 rounded-full w-fit ${
                         order.status === 'completed'
                           ? 'bg-green-500/10 text-green-500'
                           : order.status === 'shipped'
@@ -115,6 +115,18 @@ export function OrdersPage() {
                       {order.status}
                     </span>
                   </div>
+                  
+                  {/* Product Names Summary */}
+                  {order.order_items && order.order_items.length > 0 && (
+                    <div className="text-sm font-medium text-foreground">
+                      🛍️ {order.order_items.map((item: any) => item.product?.title || 'Unknown').join(', ')}
+                    </div>
+                  )}
+                  
+                  <p className="text-sm font-semibold text-primary">
+                    💰 Total: ₦{order.amount_paid.toLocaleString()}
+                  </p>
+                  
                   <p className="text-sm text-muted-foreground">
                     📞 {order.customer_phone}
                   </p>
@@ -122,41 +134,41 @@ export function OrdersPage() {
                     📍 {order.customer_address}
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    💳 {order.payment_method} - ₦{order.amount_paid.toLocaleString()}
+                    💳 {order.payment_method === 'paystack' ? 'Paystack' : 'Mobile Money'}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {new Date(order.created_at).toLocaleString()}
+                    ⏰ {new Date(order.created_at).toLocaleString('en-NG')}
                   </p>
                 </div>
 
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-row md:flex-col gap-2 flex-wrap">
                   <Button
                     size="sm"
                     variant="outline"
                     onClick={() => setSelectedOrder(selectedOrder?.id === order.id ? null : order)}
-                    className="gap-2"
+                    className="gap-2 flex-1 md:flex-none"
                   >
                     <Eye className="h-4 w-4" />
-                    {selectedOrder?.id === order.id ? 'Hide Items' : 'View Items'}
+                    {selectedOrder?.id === order.id ? 'Hide' : 'View'}
                   </Button>
                   {order.status === 'pending' && (
                     <Button
                       size="sm"
                       onClick={() => updateOrderStatus(order.id, 'shipped')}
-                      className="gap-2"
+                      className="gap-2 flex-1 md:flex-none bg-blue-600 hover:bg-blue-700"
                     >
                       <Check className="h-4 w-4" />
-                      Mark Shipped
+                      Ship
                     </Button>
                   )}
                   {order.status === 'shipped' && (
                     <Button
                       size="sm"
                       onClick={() => updateOrderStatus(order.id, 'completed')}
-                      className="gap-2"
+                      className="gap-2 flex-1 md:flex-none bg-green-600 hover:bg-green-700"
                     >
                       <Check className="h-4 w-4" />
-                      Mark Complete
+                      Complete
                     </Button>
                   )}
                 </div>
