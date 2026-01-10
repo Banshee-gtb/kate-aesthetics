@@ -27,6 +27,7 @@ export function ProductsPage() {
     category_id: '',
     tags: '',
     is_active: true,
+    base_price: '',
     shipping_fee: '',
   });
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -140,6 +141,7 @@ export function ProductsPage() {
         tags: tags.length > 0 ? tags : null,
         images: imageUrls.length > 0 ? imageUrls : null,
         is_active: formData.is_active,
+        base_price: formData.base_price ? parseFloat(formData.base_price) : 0,
         shipping_fee: formData.shipping_fee ? parseFloat(formData.shipping_fee) : 0,
       };
 
@@ -174,6 +176,7 @@ export function ProductsPage() {
         category_id: '',
         tags: '',
         is_active: true,
+        base_price: '',
         shipping_fee: '',
       });
       setSelectedFiles([]);
@@ -309,6 +312,7 @@ export function ProductsPage() {
       category_id: product.category_id || '',
       tags: product.tags?.join(', ') || '',
       is_active: product.is_active,
+      base_price: product.base_price?.toString() || '',
       shipping_fee: product.shipping_fee?.toString() || '',
     });
     setSelectedFiles([]);
@@ -550,6 +554,19 @@ export function ProductsPage() {
                   Current: {editingProduct.images.length} image(s) • Upload new images to replace
                 </p>
               )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="base_price">Base Price (₦)</Label>
+              <Input
+                id="base_price"
+                type="number"
+                step="0.01"
+                value={formData.base_price}
+                onChange={(e) => setFormData({ ...formData, base_price: e.target.value })}
+                placeholder="0"
+              />
+              <p className="text-xs text-muted-foreground">Optional reference price (variants can override this)</p>
             </div>
 
             <div className="space-y-2">
