@@ -57,8 +57,40 @@ export function Checkout() {
 
     try {
       const totalAmount = getTotalWithShipping();
+      const subtotal = calculateSubtotal();
+      const shipping = calculateShipping();
 
-      // Create order
+      // Build WhatsApp message
+      let message = `🛍️ *NEW ORDER FROM KATE AESTHETIC*\n\n`;
+      message += `📋 *Customer Details:*\n`;
+      message += `Name: ${formData.name}\n`;
+      message += `Phone: ${formData.phone}\n`;
+      message += `Address: ${formData.address}\n`;
+      message += `Payment: ${formData.paymentMethod === 'paystack' ? 'Card (Paystack)' : 'Mobile Money'}\n\n`;
+      
+      message += `📦 *Order Items:*\n`;
+      items.forEach((item, index) => {
+        message += `\n${index + 1}. ${item.product.title}\n`;
+        message += `   Color: ${item.variant.color}\n`;
+        message += `   Size: ${item.variant.size}\n`;
+        message += `   Quantity: ${item.quantity}\n`;
+        message += `   Price: ₦${item.variant.price.toLocaleString()} each\n`;
+        message += `   Subtotal: ₦${(item.variant.price * item.quantity).toLocaleString()}\n`;
+        
+        // Add product image URL if available
+        if (item.product.images && item.product.images.length > 0) {
+          message += `   Image: ${item.product.images[0]}\n`;
+        }
+      });
+      
+      message += `\n💰 *Payment Summary:*\n`;
+      message += `Subtotal: ₦${subtotal.toLocaleString()}\n`;
+      message += `Shipping: ₦${shipping.toLocaleString()}\n`;
+      message += `*Total: ₦${totalAmount.toLocaleString()}*\n\n`;
+      message += `⏰ Order placed: ${new Date().toLocaleString('en-NG')}\n\n`;
+      message += `Please confirm this order and process payment. Thank you! 🙏`;
+
+      // Create order in database (optional, for admin records)
       const { data: order, error: orderError } = await supabase
         .from('orders')
         .insert({
@@ -72,38 +104,54 @@ export function Checkout() {
         .select()
         .single();
 
-      if (orderError) throw orderError;
+      if (orderError) {
+        console.error('Order creation error:', orderError);
+        // Continue anyway - WhatsApp is primary
+      } else {
+        // Create order items
+        const orderItems = items.map(item => ({
+          order_id: order.id,
+          product_id: item.product.id,
+          variant_id: item.variant.id,
+          quantity: item.quantity,
+          price: item.variant.price,
+        }));
 
-      // Create order items
-      const orderItems = items.map(item => ({
-        order_id: order.id,
-        product_id: item.product.id,
-        variant_id: item.variant.id,
-        quantity: item.quantity,
-        price: item.variant.price,
-      }));
+        const { error: itemsError } = await supabase
+          .from('order_items')
+          .insert(orderItems);
 
-      const { error: itemsError } = await supabase
-        .from('order_items')
-        .insert(orderItems);
+        if (itemsError) {
+          console.error('Order items error:', itemsError);
+        }
+      }
 
-      if (itemsError) throw itemsError;
+      // WhatsApp number (Nigeria format: remove leading 0, add 234)
+      const whatsappNumber = '2349125568429';
+      const encodedMessage = encodeURIComponent(message);
+      const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
 
-      // In a real implementation, you would integrate with Paystack here
-      // For now, we'll just mark the order as paid
-
+      // Clear cart and redirect to WhatsApp
+      clearCart();
+      
       toast({
-        title: 'Order placed successfully!',
-        description: `Order #${order.id.substring(0, 8)} has been created. You will receive a WhatsApp notification shortly.`,
+        title: 'Redirecting to WhatsApp...',
+        description: 'Please confirm your order with the admin to complete payment.',
       });
 
-      clearCart();
-      navigate('/');
+      // Open WhatsApp in new tab
+      window.open(whatsappUrl, '_blank');
+      
+      // Redirect home after short delay
+      setTimeout(() => {
+        navigate('/');
+      }, 1500);
+
     } catch (error: any) {
       console.error('Checkout error:', error);
       toast({
-        title: 'Order failed',
-        description: error.message,
+        title: 'Order processing failed',
+        description: error.message || 'Please try again',
         variant: 'destructive',
       });
     } finally {
@@ -194,7 +242,7 @@ export function Checkout() {
                 </div>
 
                 <Button type="submit" size="lg" className="w-full" disabled={loading}>
-                  {loading ? 'Processing...' : 'Place Order'}
+                  {loading ? 'Processing...' : 'Send Order via WhatsApp'}
                 </Button>
               </form>
             </div>
