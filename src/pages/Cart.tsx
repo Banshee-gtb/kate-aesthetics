@@ -32,7 +32,7 @@ export function Cart() {
             >
               {/* Image */}
               <img
-                src={item.product.images[0] || 'https://via.placeholder.com/100'}
+                src={(item.product.images && item.product.images.length > 0) ? item.product.images[0] : 'https://via.placeholder.com/100'}
                 alt={item.product.title}
                 className="w-24 h-24 object-cover rounded-lg"
               />
@@ -43,7 +43,7 @@ export function Cart() {
                 <p className="text-sm text-muted-foreground mb-2">
                   {item.variant.color} / {item.variant.size}
                 </p>
-                <p className="font-bold text-primary">${item.variant.price.toFixed(2)}</p>
+                <p className="font-bold text-primary">₦{item.variant.price.toLocaleString()}</p>
               </div>
 
               {/* Quantity Controls */}
@@ -86,7 +86,7 @@ export function Cart() {
           <div className="flex justify-between items-center mb-4">
             <span className="text-lg font-semibold">Total</span>
             <span className="text-2xl font-bold text-primary">
-              ${getTotalPrice().toFixed(2)}
+              ₦{getTotalPrice().toLocaleString()}
             </span>
           </div>
 

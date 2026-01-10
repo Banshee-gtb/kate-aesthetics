@@ -89,7 +89,7 @@ export function ProductDetail() {
     );
   }
 
-  const images = product.images.length > 0
+  const images = product.images && product.images.length > 0
     ? product.images
     : ['https://via.placeholder.com/800x1000.png?text=No+Image'];
 
@@ -138,7 +138,12 @@ export function ProductDetail() {
               <h1 className="text-3xl font-bold mb-2">{product.title}</h1>
               {selectedVariant && (
                 <p className="text-3xl font-bold text-primary">
-                  ${selectedVariant.price.toFixed(2)}
+                  ₦{selectedVariant.price.toLocaleString()}
+                </p>
+              )}
+              {product.shipping_fee && product.shipping_fee > 0 && (
+                <p className="text-sm text-muted-foreground">
+                  + ₦{product.shipping_fee.toLocaleString()} shipping
                 </p>
               )}
             </div>

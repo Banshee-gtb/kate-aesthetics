@@ -6,6 +6,7 @@ export interface Product {
   tags: string[] | null;
   images: string[] | null;
   is_active: boolean;
+  shipping_fee: number;
   created_at: string;
   category?: Category;
 }

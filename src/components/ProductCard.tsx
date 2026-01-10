@@ -19,8 +19,8 @@ export function ProductCard({ product, variants = [] }: ProductCardProps) {
 
   const displayPrice =
     minPrice === maxPrice
-      ? `$${minPrice.toFixed(2)}`
-      : `$${minPrice.toFixed(2)} - $${maxPrice.toFixed(2)}`;
+      ? `₦${minPrice.toLocaleString()}`
+      : `₦${minPrice.toLocaleString()} - ₦${maxPrice.toLocaleString()}`;
 
   const imageUrl = product.images && product.images.length > 0
     ? product.images[0]

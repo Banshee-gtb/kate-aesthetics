@@ -174,7 +174,7 @@ export function Checkout() {
                       {item.product.title} ({item.variant.color}, {item.variant.size}) x {item.quantity}
                     </span>
                     <span className="font-semibold">
-                      ${(item.variant.price * item.quantity).toFixed(2)}
+                      ₦{(item.variant.price * item.quantity).toLocaleString()}
                     </span>
                   </div>
                 ))}
@@ -184,7 +184,7 @@ export function Checkout() {
                 <div className="flex justify-between items-center">
                   <span className="text-lg font-semibold">Total</span>
                   <span className="text-2xl font-bold text-primary">
-                    ${getTotalPrice().toFixed(2)}
+                    ₦{getTotalPrice().toLocaleString()}
                   </span>
                 </div>
               </div>

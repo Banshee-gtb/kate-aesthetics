@@ -26,9 +26,11 @@ export function ProductsPage() {
     description: '',
     category_id: '',
     tags: '',
-    images: '',
     is_active: true,
+    shipping_fee: '',
   });
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [uploading, setUploading] = useState(false);
   const [variantForm, setVariantForm] = useState({
     color: '',
     size: '',
@@ -95,12 +97,36 @@ export function ProductsPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setUploading(true);
 
     try {
-      const imageUrls = formData.images
-        .split(',')
-        .map((url) => url.trim())
-        .filter((url) => url);
+      let imageUrls: string[] = [];
+
+      // Upload new images if any
+      if (selectedFiles.length > 0) {
+        const uploadPromises = selectedFiles.map(async (file) => {
+          const fileExt = file.name.split('.').pop();
+          const fileName = `${Math.random()}.${fileExt}`;
+          const filePath = `${fileName}`;
+
+          const { error: uploadError } = await supabase.storage
+            .from('product-images')
+            .upload(filePath, file);
+
+          if (uploadError) throw uploadError;
+
+          const { data: { publicUrl } } = supabase.storage
+            .from('product-images')
+            .getPublicUrl(filePath);
+
+          return publicUrl;
+        });
+
+        imageUrls = await Promise.all(uploadPromises);
+      } else if (editingProduct?.images) {
+        // Keep existing images if editing and no new files
+        imageUrls = editingProduct.images;
+      }
 
       const tags = formData.tags
         .split(',')
@@ -114,6 +140,7 @@ export function ProductsPage() {
         tags: tags.length > 0 ? tags : null,
         images: imageUrls.length > 0 ? imageUrls : null,
         is_active: formData.is_active,
+        shipping_fee: formData.shipping_fee ? parseFloat(formData.shipping_fee) : 0,
       };
 
       if (editingProduct) {
@@ -146,9 +173,10 @@ export function ProductsPage() {
         description: '',
         category_id: '',
         tags: '',
-        images: '',
         is_active: true,
+        shipping_fee: '',
       });
+      setSelectedFiles([]);
       fetchProducts();
     } catch (error: any) {
       console.error('Error saving product:', error);
@@ -157,6 +185,8 @@ export function ProductsPage() {
         description: error.message,
         variant: 'destructive',
       });
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -278,9 +308,10 @@ export function ProductsPage() {
       description: product.description || '',
       category_id: product.category_id || '',
       tags: product.tags?.join(', ') || '',
-      images: product.images?.join(', ') || '',
       is_active: product.is_active,
+      shipping_fee: product.shipping_fee?.toString() || '',
     });
+    setSelectedFiles([]);
     setShowAddModal(true);
   };
 
@@ -498,22 +529,48 @@ export function ProductsPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="images">Image URLs (comma-separated)</Label>
-              <Textarea
+              <Label htmlFor="images">Product Images (Multiple)</Label>
+              <Input
                 id="images"
-                value={formData.images}
-                onChange={(e) => setFormData({ ...formData, images: e.target.value })}
-                placeholder="https://example.com/image1.jpg, https://example.com/image2.jpg"
-                rows={2}
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={(e) => {
+                  const files = Array.from(e.target.files || []);
+                  setSelectedFiles(files);
+                }}
               />
+              {selectedFiles.length > 0 && (
+                <p className="text-sm text-muted-foreground">
+                  {selectedFiles.length} file(s) selected
+                </p>
+              )}
+              {editingProduct?.images && editingProduct.images.length > 0 && selectedFiles.length === 0 && (
+                <p className="text-sm text-muted-foreground">
+                  Current: {editingProduct.images.length} image(s) • Upload new images to replace
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="shipping_fee">Shipping Fee (₦)</Label>
+              <Input
+                id="shipping_fee"
+                type="number"
+                step="0.01"
+                value={formData.shipping_fee}
+                onChange={(e) => setFormData({ ...formData, shipping_fee: e.target.value })}
+                placeholder="0"
+              />
+              <p className="text-xs text-muted-foreground">Leave as 0 for free shipping</p>
             </div>
 
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setShowAddModal(false)}>
+              <Button type="button" variant="outline" onClick={() => setShowAddModal(false)} disabled={uploading}>
                 Cancel
               </Button>
-              <Button type="submit">
-                {editingProduct ? 'Update Product' : 'Add Product'}
+              <Button type="submit" disabled={uploading}>
+                {uploading ? 'Uploading...' : editingProduct ? 'Update Product' : 'Add Product'}
               </Button>
             </DialogFooter>
           </form>
