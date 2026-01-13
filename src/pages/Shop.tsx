@@ -5,6 +5,13 @@ import { Button } from '@/components/ui/button';
 import { ProductCard } from '@/components/ProductCard';
 import { supabase } from '@/lib/supabase';
 import { Product, ProductVariant, Category } from '@/types';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 export function Shop() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -41,30 +48,49 @@ export function Shop() {
       query = query.eq('category_id', selectedCategory);
     }
 
-    if (searchQuery) {
-      query = query.ilike('title', `%${searchQuery}%`);
-    }
-
     const { data: productsData } = await query;
 
     if (productsData && productsData.length > 0) {
-      setProducts(productsData);
-
-      const productIds = productsData.map(p => p.id);
-      const { data: variantsData } = await supabase
-        .from('product_variants')
-        .select('*')
-        .in('product_id', productIds);
-
-      if (variantsData) {
-        const variantsByProduct: Record<string, ProductVariant[]> = {};
-        variantsData.forEach(variant => {
-          if (!variantsByProduct[variant.product_id]) {
-            variantsByProduct[variant.product_id] = [];
-          }
-          variantsByProduct[variant.product_id].push(variant);
+      // Client-side filtering for search (includes tags, title, description)
+      let filteredProducts = productsData;
+      
+      if (searchQuery) {
+        const searchLower = searchQuery.toLowerCase();
+        filteredProducts = productsData.filter(product => {
+          // Search in title
+          const titleMatch = product.title?.toLowerCase().includes(searchLower);
+          
+          // Search in description
+          const descMatch = product.description?.toLowerCase().includes(searchLower);
+          
+          // Search in tags (array)
+          const tagsMatch = product.tags?.some((tag: string) => 
+            tag.toLowerCase().includes(searchLower)
+          );
+          
+          return titleMatch || descMatch || tagsMatch;
         });
-        setVariants(variantsByProduct);
+      }
+
+      setProducts(filteredProducts);
+
+      if (filteredProducts.length > 0) {
+        const productIds = filteredProducts.map(p => p.id);
+        const { data: variantsData } = await supabase
+          .from('product_variants')
+          .select('*')
+          .in('product_id', productIds);
+
+        if (variantsData) {
+          const variantsByProduct: Record<string, ProductVariant[]> = {};
+          variantsData.forEach(variant => {
+            if (!variantsByProduct[variant.product_id]) {
+              variantsByProduct[variant.product_id] = [];
+            }
+            variantsByProduct[variant.product_id].push(variant);
+          });
+          setVariants(variantsByProduct);
+        }
       }
     } else {
       setProducts([]);
@@ -84,39 +110,36 @@ export function Shop() {
         </div>
 
         {/* Filters */}
-        <div className="mb-8 space-y-4">
+        <div className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Search */}
-          <div className="relative max-w-md">
+          <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
               type="text"
-              placeholder="Search products..."
+              placeholder="Search by name, description, or tags..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10 bg-white/80 backdrop-blur-soft"
             />
           </div>
 
-          {/* Categories */}
-          <div className="flex flex-wrap gap-2">
-            <Button
-              variant={selectedCategory === null ? 'default' : 'outline'}
-              onClick={() => setSelectedCategory(null)}
-              className="rounded-full"
-            >
-              All
-            </Button>
-            {categories.map(category => (
-              <Button
-                key={category.id}
-                variant={selectedCategory === category.id ? 'default' : 'outline'}
-                onClick={() => setSelectedCategory(category.id)}
-                className="rounded-full"
-              >
-                {category.name}
-              </Button>
-            ))}
-          </div>
+          {/* Categories Dropdown */}
+          <Select
+            value={selectedCategory || 'all'}
+            onValueChange={(value) => setSelectedCategory(value === 'all' ? null : value)}
+          >
+            <SelectTrigger className="bg-white/80 backdrop-blur-soft">
+              <SelectValue placeholder="Filter by category" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Categories</SelectItem>
+              {categories.map(category => (
+                <SelectItem key={category.id} value={category.id}>
+                  {category.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Products Grid */}
