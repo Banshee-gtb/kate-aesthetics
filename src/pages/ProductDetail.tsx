@@ -46,6 +46,19 @@ export function ProductDetail() {
       if (variantsData && variantsData.length > 0) {
         setVariants(variantsData);
         setSelectedVariant(variantsData[0]);
+      } else if (productData.base_price && productData.base_price > 0) {
+        // Create a virtual default variant for products without explicit variants
+        const defaultVariant: ProductVariant = {
+          id: `default-${productData.id}`,
+          product_id: productData.id,
+          color: 'Default',
+          size: 'Standard',
+          price: productData.base_price,
+          in_stock: true,
+          created_at: new Date().toISOString(),
+        };
+        setVariants([defaultVariant]);
+        setSelectedVariant(defaultVariant);
       }
     }
 
@@ -53,13 +66,50 @@ export function ProductDetail() {
   };
 
   const handleAddToCart = () => {
-    if (!product || !selectedVariant) return;
+    if (!product) {
+      toast({
+        title: 'Error',
+        description: 'Product information not available',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (!selectedVariant) {
+      toast({
+        title: 'Please select options',
+        description: 'Select color and size before adding to cart',
+        variant: 'destructive',
+      });
+      return;
+    }
 
     addItem(product, selectedVariant, quantity);
+    
+    const variantInfo = selectedVariant.color === 'Default' && selectedVariant.size === 'Standard'
+      ? ''
+      : ` (${selectedVariant.color}, ${selectedVariant.size})`;
+    
     toast({
-      title: 'Added to cart',
-      description: `${product.title} (${selectedVariant.color}, ${selectedVariant.size})`,
+      title: '✓ Added to cart',
+      description: `${product.title}${variantInfo} x ${quantity}`,
     });
+  };
+
+  const handleBuyNow = () => {
+    if (!product || !selectedVariant) {
+      toast({
+        title: 'Please select options',
+        description: 'Select color and size before purchasing',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    handleAddToCart();
+    setTimeout(() => {
+      navigate('/checkout');
+    }, 300);
   };
 
   const uniqueColors = [...new Set(variants.map(v => v.color))];
@@ -136,11 +186,15 @@ export function ProductDetail() {
           <div className="space-y-6">
             <div>
               <h1 className="text-3xl font-bold mb-2">{product.title}</h1>
-              {selectedVariant && (
+              {selectedVariant ? (
                 <p className="text-3xl font-bold text-primary">
                   ₦{selectedVariant.price.toLocaleString()}
                 </p>
-              )}
+              ) : product.base_price ? (
+                <p className="text-3xl font-bold text-primary">
+                  ₦{product.base_price.toLocaleString()}
+                </p>
+              ) : null}
               {product.shipping_fee && product.shipping_fee > 0 && (
                 <p className="text-sm text-muted-foreground">
                   + ₦{product.shipping_fee.toLocaleString()} shipping
@@ -162,8 +216,8 @@ export function ProductDetail() {
               </div>
             )}
 
-            {/* Color Selection */}
-            {uniqueColors.length > 0 && (
+            {/* Color Selection - Only show if there are actual variants (not default) */}
+            {uniqueColors.length > 0 && !(uniqueColors.length === 1 && uniqueColors[0] === 'Default') && (
               <div className="space-y-2">
                 <label className="text-sm font-semibold">Color</label>
                 <div className="flex flex-wrap gap-2">
@@ -188,8 +242,8 @@ export function ProductDetail() {
               </div>
             )}
 
-            {/* Size Selection */}
-            {sizesForColor.length > 0 && (
+            {/* Size Selection - Only show if there are actual variants (not default) */}
+            {sizesForColor.length > 0 && !(sizesForColor.length === 1 && sizesForColor[0].size === 'Standard') && (
               <div className="space-y-2">
                 <label className="text-sm font-semibold">Size</label>
                 <div className="flex flex-wrap gap-2">
@@ -233,13 +287,13 @@ export function ProductDetail() {
               </div>
             </div>
 
-            {/* Add to Cart */}
+            {/* Add to Cart & Buy Now */}
             <div className="space-y-3">
               <Button
                 size="lg"
                 className="w-full"
                 onClick={handleAddToCart}
-                disabled={!selectedVariant}
+                disabled={!selectedVariant && !product.base_price}
               >
                 <ShoppingCart className="mr-2 h-5 w-5" />
                 Add to Cart
@@ -247,16 +301,25 @@ export function ProductDetail() {
               <Button
                 size="lg"
                 variant="outline"
-                className="w-full"
-                onClick={() => {
-                  handleAddToCart();
-                  navigate('/checkout');
-                }}
-                disabled={!selectedVariant}
+                className="w-full border-2 border-primary hover:bg-primary hover:text-white"
+                onClick={handleBuyNow}
+                disabled={!selectedVariant && !product.base_price}
               >
                 Buy Now
               </Button>
             </div>
+
+            {/* Stock Status */}
+            {selectedVariant && (
+              <div className="flex items-center gap-2">
+                <div className={`h-2 w-2 rounded-full ${
+                  selectedVariant.in_stock ? 'bg-green-500' : 'bg-red-500'
+                }`} />
+                <span className="text-sm text-muted-foreground">
+                  {selectedVariant.in_stock ? 'In Stock' : 'Out of Stock'}
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </div>
