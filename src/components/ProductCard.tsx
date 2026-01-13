@@ -37,11 +37,32 @@ export function ProductCard({ product, variants = [] }: ProductCardProps) {
     e.preventDefault();
     e.stopPropagation();
     
+    // If no variants, create a default variant using base_price
     if (!variants || variants.length === 0) {
+      if (!product.base_price || product.base_price === 0) {
+        toast({
+          title: 'Price not set',
+          description: 'This product is not available for purchase yet.',
+          variant: 'destructive',
+        });
+        return;
+      }
+
+      // Create a virtual default variant
+      const defaultVariant: ProductVariant = {
+        id: `default-${product.id}`,
+        product_id: product.id,
+        color: 'Default',
+        size: 'Standard',
+        price: product.base_price,
+        in_stock: true,
+        created_at: new Date().toISOString(),
+      };
+
+      addItem(product, defaultVariant, 1);
       toast({
-        title: 'No variants available',
-        description: 'Please view product details or contact us.',
-        variant: 'destructive',
+        title: '✓ Added to cart',
+        description: product.title,
       });
       return;
     }
@@ -110,7 +131,6 @@ export function ProductCard({ product, variants = [] }: ProductCardProps) {
             size="sm"
             className="w-full mt-1 sm:mt-2 h-8 sm:h-9 text-xs sm:text-sm"
             onClick={handleAddToCart}
-            disabled={variants.length === 0}
           >
             <ShoppingCart className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
             Add to Cart
