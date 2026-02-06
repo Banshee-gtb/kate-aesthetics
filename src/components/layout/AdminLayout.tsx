@@ -10,6 +10,7 @@ import {
   Menu,
   X,
   Users,
+  Heart,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/lib/supabase';
@@ -45,10 +46,11 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   return (
     <div className="min-h-screen bg-gradient-aesthetic">
       {/* Mobile Header */}
-      <div className="lg:hidden sticky top-0 z-50 backdrop-blur-soft bg-white/80 border-b border-border px-4 py-3 flex items-center justify-between">
-        <Link to="/admin" className="flex items-center">
-          <h1 className="text-lg font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            Kate Admin
+      <div className="lg:hidden sticky top-0 z-50 backdrop-blur-soft bg-white/90 border-b-2 border-pink-200 px-4 py-3 flex items-center justify-between shadow-sm">
+        <Link to="/admin" className="flex items-center gap-2">
+          <Heart className="h-5 w-5 text-red-500 fill-red-500 animate-heart-beat" />
+          <h1 className="text-lg font-bold bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">
+            Kate Admin 💝
           </h1>
         </Link>
         <Button
@@ -65,17 +67,19 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         <aside
           className={`
             fixed lg:sticky top-0 left-0 z-40 h-screen w-64 
-            backdrop-blur-soft bg-white/90 border-r border-border
+            backdrop-blur-soft bg-white/95 border-r-2 border-pink-200 shadow-xl
             transition-transform duration-300 ease-in-out
             ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
           `}
         >
           <div className="flex flex-col h-full p-4 pt-20 lg:pt-4">
             {/* Logo */}
-            <div className="hidden lg:block mb-8">
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            <div className="hidden lg:block mb-8 text-center">
+              <Heart className="h-8 w-8 mx-auto mb-2 text-red-500 fill-red-500 animate-heart-beat" />
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">
                 Kate Admin
               </h1>
+              <p className="text-xs text-muted-foreground mt-1">💝 Valentine's Edition</p>
             </div>
 
             {/* Navigation */}
@@ -89,11 +93,11 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                     onClick={() => setSidebarOpen(false)}
                     className={`
                       flex items-center space-x-3 px-4 py-3 rounded-lg
-                      transition-smooth
+                      transition-all duration-300
                       ${
                         isActive
-                          ? 'bg-primary text-white'
-                          : 'hover:bg-primary/10 text-foreground'
+                          ? 'bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-lg scale-105'
+                          : 'hover:bg-gradient-to-r hover:from-red-100 hover:to-pink-100 text-foreground hover:scale-102'
                       }
                     `}
                   >
@@ -107,7 +111,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             {/* Logout */}
             <Button
               variant="ghost"
-              className="w-full justify-start space-x-3 text-destructive hover:bg-destructive/10"
+              className="w-full justify-start space-x-3 text-red-600 hover:bg-red-100 hover:scale-105 transition-all duration-300"
               onClick={handleLogout}
             >
               <LogOut className="h-5 w-5" />
