@@ -70,7 +70,7 @@ export default function AdminLogin() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            Kate Aesthetic
+            Mimi's Hub
           </h1>
           <p className="text-muted-foreground">Admin Dashboard</p>
         </div>
