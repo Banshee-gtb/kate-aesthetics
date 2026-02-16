@@ -82,7 +82,7 @@ export function Footer() {
               <a href="https://www.instagram.com/khate849/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-smooth" aria-label="Instagram">
                 <Instagram className="h-5 w-5" />
               </a>
-              <a href="https://wa.me/09125568429" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-smooth" aria-label="WhatsApp">
+              <a href="https://wa.me/09132996389" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-smooth" aria-label="WhatsApp">
                 <MessageCircle className="h-5 w-5" />
               </a>
             </div>

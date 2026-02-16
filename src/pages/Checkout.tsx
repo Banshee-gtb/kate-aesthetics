@@ -128,7 +128,7 @@ export function Checkout() {
       }
 
       // WhatsApp number (Nigeria format: remove leading 0, add 234)
-      const whatsappNumber = '2349125568429';
+      const whatsappNumber = '2349132996389';
       const encodedMessage = encodeURIComponent(message);
       const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
 
