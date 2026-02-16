@@ -9,7 +9,7 @@ export function Footer() {
           {/* Brand */}
           <div className="space-y-4">
             <h3 className="text-lg font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              Kate Aesthetic
+              Mimi's Hub
             </h3>
             <p className="text-sm text-muted-foreground">
               Curated fashion pieces for the modern aesthetic lover.
@@ -90,7 +90,7 @@ export function Footer() {
         </div>
 
         <div className="mt-8 pt-8 border-t border-border text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} Kate Aesthetic. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Mimi's Hub. All rights reserved.</p>
         </div>
       </div>
     </footer>
