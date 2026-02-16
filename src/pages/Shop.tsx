@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Search, Heart } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ProductCard } from '@/components/ProductCard';
-import { ValentineDiscount } from '@/components/ValentineDiscount';
+
 import { supabase } from '@/lib/supabase';
 import { Product, ProductVariant, Category } from '@/types';
 import {
@@ -103,30 +103,25 @@ export function Shop() {
 
   return (
     <div className="min-h-screen bg-gradient-aesthetic py-8 px-4">
-      <ValentineDiscount />
       
       <div className="container mx-auto max-w-7xl">
         {/* Header */}
         <div className="mb-8 text-center">
-          <div className="inline-flex items-center gap-3 mb-4">
-            <Heart className="h-10 w-10 text-red-500 fill-red-500 animate-heart-beat" />
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">Valentine's Shop</h1>
-            <Heart className="h-10 w-10 text-pink-500 fill-pink-500 animate-heart-beat" style={{ animationDelay: '0.5s' }} />
-          </div>
-          <p className="text-muted-foreground text-lg">💝 Find the perfect gift for your special someone 💝</p>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Shop</h1>
+          <p className="text-muted-foreground text-lg">Browse our complete collection</p>
         </div>
 
         {/* Filters */}
         <div className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Search */}
-          <div className="relative valentine-shimmer">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-red-500" />
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
               type="text"
-              placeholder="🔍 Search for the perfect gift..."
+              placeholder="Search products..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-white/90 backdrop-blur-soft border-2 border-pink-200 focus:border-red-400 transition-colors"
+              className="pl-10"
             />
           </div>
 
@@ -135,14 +130,14 @@ export function Shop() {
             value={selectedCategory || 'all'}
             onValueChange={(value) => setSelectedCategory(value === 'all' ? null : value)}
           >
-            <SelectTrigger className="bg-white/90 backdrop-blur-soft border-2 border-pink-200 focus:border-red-400 transition-colors">
-              <SelectValue placeholder="💕 Filter by category" />
+            <SelectTrigger>
+              <SelectValue placeholder="Filter by category" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">💖 All Categories</SelectItem>
+              <SelectItem value="all">All Categories</SelectItem>
               {categories.map(category => (
                 <SelectItem key={category.id} value={category.id}>
-                  🌹 {category.name}
+                  {category.name}
                 </SelectItem>
               ))}
             </SelectContent>

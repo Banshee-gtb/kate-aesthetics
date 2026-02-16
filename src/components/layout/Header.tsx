@@ -1,4 +1,4 @@
-import { ShoppingCart, Menu, X, Heart } from 'lucide-react';
+import { ShoppingCart, Menu, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { useCartStore } from '@/stores/cartStore';
@@ -9,40 +9,36 @@ export function Header() {
   const totalItems = useCartStore(state => state.getTotalItems());
 
   return (
-    <header className="sticky top-0 z-50 w-full backdrop-blur-soft bg-white/90 border-b-2 border-pink-200 shadow-sm">
+    <header className="sticky top-0 z-50 w-full backdrop-blur-soft bg-white/90 border-b border-border shadow-sm">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2 group">
-            <Heart className="h-6 w-6 text-red-500 fill-red-500 animate-heart-beat group-hover:scale-110 transition-transform" />
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">
-              Kate Aesthetic
+          <Link to="/" className="flex items-center space-x-2">
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              Mimi's Hub
             </h1>
           </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <Link to="/" className="text-sm font-semibold hover:text-red-500 transition-colors duration-300 relative group">
+            <Link to="/" className="text-sm font-semibold hover:text-primary transition-colors">
               Home
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-red-500 to-pink-500 group-hover:w-full transition-all duration-300"></span>
             </Link>
-            <Link to="/shop" className="text-sm font-semibold hover:text-red-500 transition-colors duration-300 relative group">
-              💝 Shop
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-red-500 to-pink-500 group-hover:w-full transition-all duration-300"></span>
+            <Link to="/shop" className="text-sm font-semibold hover:text-primary transition-colors">
+              Shop
             </Link>
-            <Link to="/about" className="text-sm font-semibold hover:text-red-500 transition-colors duration-300 relative group">
+            <Link to="/about" className="text-sm font-semibold hover:text-primary transition-colors">
               About
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-red-500 to-pink-500 group-hover:w-full transition-all duration-300"></span>
             </Link>
           </nav>
 
           {/* Cart & Mobile Menu */}
           <div className="flex items-center space-x-4">
             <Link to="/cart">
-              <Button variant="ghost" size="icon" className="relative hover:scale-110 transition-transform">
-                <ShoppingCart className="h-5 w-5 text-red-500" />
+              <Button variant="ghost" size="icon" className="relative">
+                <ShoppingCart className="h-5 w-5" />
                 {totalItems > 0 && (
-                  <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs flex items-center justify-center shadow-lg animate-bounce">
+                  <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-primary text-white text-xs flex items-center justify-center">
                     {totalItems}
                   </span>
                 )}

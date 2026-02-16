@@ -89,17 +89,15 @@ export function ProductCard({ product, variants = [] }: ProductCardProps) {
 
   return (
     <Link to={`/product/${product.id}`}>
-      <Card className="group overflow-hidden border-2 border-pink-200/50 bg-gradient-card backdrop-blur-soft hover:shadow-xl hover:shadow-pink-500/20 hover:border-red-400/50 transition-all duration-300 hover:scale-105 h-full flex flex-col valentine-shimmer">
+      <Card className="group overflow-hidden border bg-gradient-card backdrop-blur-soft hover:shadow-lg transition-smooth hover:scale-105 h-full flex flex-col">
         <CardContent className="p-0 relative">
           {/* Image */}
           <div className="aspect-[3/4] sm:aspect-[4/5] overflow-hidden bg-muted relative">
             <img
               src={imageUrl}
               alt={product.title}
-              className="w-full h-full object-cover group-hover:scale-110 transition-all duration-500"
+              className="w-full h-full object-cover group-hover:scale-110 transition-smooth"
             />
-            {/* Heart overlay on hover */}
-            <div className="absolute inset-0 bg-gradient-to-t from-red-500/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </div>
         </CardContent>
 
@@ -115,7 +113,7 @@ export function ProductCard({ product, variants = [] }: ProductCardProps) {
           )}
 
           {/* Price */}
-          <p className="text-sm sm:text-lg font-bold bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">{displayPrice}</p>
+          <p className="text-sm sm:text-lg font-bold text-primary">{displayPrice}</p>
 
           {/* Tags - Show only on larger screens */}
           {product.tags && product.tags.length > 0 && (
@@ -131,7 +129,7 @@ export function ProductCard({ product, variants = [] }: ProductCardProps) {
           {/* Add to Cart Button */}
           <Button
             size="sm"
-            className="w-full mt-1 sm:mt-2 h-8 sm:h-9 text-xs sm:text-sm bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 shadow-md hover:shadow-lg transition-all duration-300"
+            className="w-full mt-1 sm:mt-2 h-8 sm:h-9 text-xs sm:text-sm"
             onClick={handleAddToCart}
           >
             <ShoppingCart className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
