@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
 import { useAuthStore } from '@/stores/authStore';
+import { createAdminUser } from '@/lib/createAdmin';
 
 export default function AdminLogin() {
   const { toast } = useToast();
@@ -18,6 +19,23 @@ export default function AdminLogin() {
     password: '',
   });
 
+  // Quick setup function - run this once to create the admin
+  const setupAdmin = async () => {
+    const result = await createAdminUser('mimi4vic@gmail.com', 'Marian12?');
+    if (result.success) {
+      toast({
+        title: 'Admin setup complete',
+        description: 'You can now login with your credentials',
+      });
+    } else {
+      toast({
+        title: 'Setup note',
+        description: result.error,
+        variant: 'destructive',
+      });
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -28,7 +46,44 @@ export default function AdminLogin() {
         password: formData.password,
       });
 
-      if (error) throw error;
+      if (error) {
+        // If user doesn't exist, try to create it
+        if (error.message.includes('Invalid login credentials')) {
+          console.log('User not found, attempting to create...');
+          const setupResult = await createAdminUser(formData.email, formData.password);
+          
+          if (setupResult.success) {
+            // Try login again
+            const { data: retryData, error: retryError } = await supabase.auth.signInWithPassword({
+              email: formData.email,
+              password: formData.password,
+            });
+            
+            if (retryError) throw retryError;
+            
+            // Check if user is admin
+            const { data: adminData } = await supabase
+              .from('admins')
+              .select('email')
+              .eq('email', formData.email)
+              .single();
+
+            if (!adminData) {
+              await supabase.auth.signOut();
+              throw new Error('Unauthorized: Admin access only');
+            }
+
+            login(retryData.user);
+            toast({
+              title: 'Login successful',
+              description: 'Welcome to Mimi\'s Hub!',
+            });
+            navigate('/admin');
+            return;
+          }
+        }
+        throw error;
+      }
 
       // Check if user is admin
       const { data: adminData } = await supabase
@@ -57,7 +112,7 @@ export default function AdminLogin() {
       console.error('Login error:', error);
       toast({
         title: 'Login failed',
-        description: error.message,
+        description: error.message || 'Please check your credentials',
         variant: 'destructive',
       });
     } finally {
@@ -92,7 +147,7 @@ export default function AdminLogin() {
                     setFormData({ ...formData, email: e.target.value })
                   }
                   className="pl-10"
-                  placeholder="admin@example.com"
+                  placeholder="mimi4vic@gmail.com"
                 />
               </div>
             </div>
@@ -119,6 +174,20 @@ export default function AdminLogin() {
               {loading ? 'Signing in...' : 'Sign In'}
             </Button>
           </form>
+
+          <div className="mt-6 pt-6 border-t border-border">
+            <Button 
+              onClick={setupAdmin} 
+              variant="outline" 
+              className="w-full"
+              type="button"
+            >
+              First Time Setup
+            </Button>
+            <p className="text-xs text-muted-foreground mt-2 text-center">
+              Click if this is your first login
+            </p>
+          </div>
         </div>
       </div>
     </div>
