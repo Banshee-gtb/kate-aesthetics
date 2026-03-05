@@ -12,7 +12,7 @@ import { createAdminUser } from '@/lib/createAdmin';
 export default function AdminLogin() {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const login = useAuthStore((state) => state.login);
+  const { login, setLoading: setAuthLoading } = useAuthStore();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
@@ -50,19 +50,17 @@ export default function AdminLogin() {
           user_metadata: { name: 'Mimi Admin' },
         };
         
-        // Login and set admin status
+        // Login and set admin status (login() now sets loading to false)
         login(mockUser);
+        setAuthLoading(false);
         
         toast({
           title: 'Login successful',
           description: 'Welcome to Mimi\'s Hub!',
         });
         
-        // Small delay to ensure state updates before navigation
-        setTimeout(() => {
-          navigate('/admin');
-        }, 100);
-        
+        // Navigate immediately
+        navigate('/admin', { replace: true });
         return;
       }
       
