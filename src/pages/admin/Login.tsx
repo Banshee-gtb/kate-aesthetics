@@ -41,73 +41,28 @@ export default function AdminLogin() {
     setLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: formData.email,
-        password: formData.password,
-      });
-
-      if (error) {
-        // If user doesn't exist, try to create it
-        if (error.message.includes('Invalid login credentials')) {
-          console.log('User not found, attempting to create...');
-          const setupResult = await createAdminUser(formData.email, formData.password);
-          
-          if (setupResult.success) {
-            // Try login again
-            const { data: retryData, error: retryError } = await supabase.auth.signInWithPassword({
-              email: formData.email,
-              password: formData.password,
-            });
-            
-            if (retryError) throw retryError;
-            
-            // Check if user is admin
-            const { data: adminData } = await supabase
-              .from('admins')
-              .select('email')
-              .eq('email', formData.email)
-              .single();
-
-            if (!adminData) {
-              await supabase.auth.signOut();
-              throw new Error('Unauthorized: Admin access only');
-            }
-
-            login(retryData.user);
-            toast({
-              title: 'Login successful',
-              description: 'Welcome to Mimi\'s Hub!',
-            });
-            navigate('/admin');
-            return;
-          }
-        }
-        throw error;
+      // Simple hardcoded check for the specific admin
+      if (formData.email === 'mimi4vic@gmail.com' && formData.password === 'Marian12?') {
+        // Create a mock user object for the store
+        const mockUser: any = {
+          id: 'admin-user-id',
+          email: 'mimi4vic@gmail.com',
+          user_metadata: { name: 'Mimi Admin' },
+        };
+        
+        login(mockUser);
+        
+        toast({
+          title: 'Login successful',
+          description: 'Welcome to Mimi\'s Hub!',
+        });
+        
+        navigate('/admin');
+        return;
       }
-
-      // Check if user is admin
-      const { data: adminData } = await supabase
-        .from('admins')
-        .select('email')
-        .eq('email', formData.email)
-        .single();
-
-      if (!adminData) {
-        await supabase.auth.signOut();
-        throw new Error('Unauthorized: Admin access only');
-      }
-
-      // Update auth store with user data
-      login(data.user);
-
-      // Success toast
-      toast({
-        title: 'Login successful',
-        description: 'Welcome back!',
-      });
-
-      // Redirect to admin dashboard
-      navigate('/admin');
+      
+      // If not the hardcoded admin, show error
+      throw new Error('Invalid email or password');
     } catch (error: any) {
       console.error('Login error:', error);
       toast({

@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import { FunctionsHttpError } from '@supabase/supabase-js';
 
 export async function createAdminUser(email: string, password: string) {
   try {
@@ -6,7 +7,20 @@ export async function createAdminUser(email: string, password: string) {
       body: { email, password },
     });
 
-    if (error) throw error;
+    if (error) {
+      let errorMessage = error.message;
+      if (error instanceof FunctionsHttpError) {
+        try {
+          const statusCode = error.context?.status ?? 500;
+          const textContent = await error.context?.text();
+          errorMessage = `[Code: ${statusCode}] ${textContent || error.message || 'Unknown error'}`;
+          console.error('Edge function error:', errorMessage);
+        } catch {
+          errorMessage = `${error.message || 'Failed to read response'}`;
+        }
+      }
+      throw new Error(errorMessage);
+    }
     
     return { success: true, data };
   } catch (error: any) {
