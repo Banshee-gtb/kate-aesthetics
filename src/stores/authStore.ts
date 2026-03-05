@@ -19,7 +19,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   
   login: (user: User) => {
     set({ user });
-    get().checkAdmin();
+    // For hardcoded admin, directly set isAdmin to true
+    if (user.email === 'mimi4vic@gmail.com') {
+      set({ isAdmin: true });
+    } else {
+      get().checkAdmin();
+    }
   },
   
   logout: () => set({ user: null, isAdmin: false }),

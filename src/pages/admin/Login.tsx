@@ -50,6 +50,7 @@ export default function AdminLogin() {
           user_metadata: { name: 'Mimi Admin' },
         };
         
+        // Login and set admin status
         login(mockUser);
         
         toast({
@@ -57,7 +58,11 @@ export default function AdminLogin() {
           description: 'Welcome to Mimi\'s Hub!',
         });
         
-        navigate('/admin');
+        // Small delay to ensure state updates before navigation
+        setTimeout(() => {
+          navigate('/admin');
+        }, 100);
+        
         return;
       }
       
