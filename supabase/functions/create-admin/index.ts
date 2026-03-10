@@ -27,7 +27,7 @@ Deno.serve(async (req) => {
       password,
       email_confirm: true,
       user_metadata: {
-        name: 'Mimi Admin',
+        name: 'Kate Admin',
       },
     });
 

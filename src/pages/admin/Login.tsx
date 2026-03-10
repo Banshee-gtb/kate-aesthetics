@@ -21,7 +21,7 @@ export default function AdminLogin() {
 
   // Quick setup function - run this once to create the admin
   const setupAdmin = async () => {
-    const result = await createAdminUser('mimi4vic@gmail.com', 'Marian12?');
+    const result = await createAdminUser('otukatepeace123@gmail.com', 'jungkook');
     if (result.success) {
       toast({
         title: 'Admin setup complete',
@@ -42,12 +42,12 @@ export default function AdminLogin() {
 
     try {
       // Simple hardcoded check for the specific admin
-      if (formData.email === 'mimi4vic@gmail.com' && formData.password === 'Marian12?') {
+      if (formData.email === 'otukatepeace123@gmail.com' && formData.password === 'jungkook') {
         // Create a mock user object for the store
         const mockUser: any = {
           id: 'admin-user-id',
-          email: 'mimi4vic@gmail.com',
-          user_metadata: { name: 'Mimi Admin' },
+          email: 'otukatepeace123@gmail.com',
+          user_metadata: { name: 'Kate Admin' },
         };
         
         // Login and set admin status (login() now sets loading to false)
@@ -56,7 +56,7 @@ export default function AdminLogin() {
         
         toast({
           title: 'Login successful',
-          description: 'Welcome to Mimi\'s Hub!',
+          description: 'Welcome to Kate Aesthetic!',
         });
         
         // Navigate immediately
@@ -83,7 +83,7 @@ export default function AdminLogin() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            Mimi's Hub
+            Kate Aesthetic
           </h1>
           <p className="text-muted-foreground">Admin Dashboard</p>
         </div>
@@ -105,7 +105,7 @@ export default function AdminLogin() {
                     setFormData({ ...formData, email: e.target.value })
                   }
                   className="pl-10"
-                  placeholder="mimi4vic@gmail.com"
+                  placeholder="otukatepeace123@gmail.com"
                 />
               </div>
             </div>

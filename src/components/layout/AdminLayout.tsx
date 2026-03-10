@@ -49,7 +49,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       <div className="lg:hidden sticky top-0 z-50 backdrop-blur-soft bg-white/90 border-b border-border px-4 py-3 flex items-center justify-between shadow-sm">
         <Link to="/admin" className="flex items-center gap-2">
           <h1 className="text-lg font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            Mimi's Hub Admin
+            Kate Aesthetic Admin
           </h1>
         </Link>
         <Button
@@ -75,7 +75,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             {/* Logo */}
             <div className="hidden lg:block mb-8 text-center">
               <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                Mimi's Hub Admin
+                Kate Aesthetic Admin
               </h1>
             </div>
 

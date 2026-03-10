@@ -15,7 +15,7 @@ export function Header() {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              Mimi's Hub
+              Kate Aesthetic
             </h1>
           </Link>
 

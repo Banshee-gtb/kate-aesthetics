@@ -61,7 +61,7 @@ export function Home() {
         
         <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
           <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            Mimi's Hub
+            Kate Aesthetic
           </h1>
 
           <p className="text-lg md:text-xl text-foreground/80 mb-4 max-w-2xl mx-auto font-medium">
